@@ -1,2 +1,2 @@
 ## 0.1.0
-* First published version of dtexp
+* First release version of dtexp
