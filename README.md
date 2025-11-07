@@ -231,11 +231,22 @@ Results will appear in `dist` subdirectory
 
 ### Release
 
+#### Preparations
+All in develop branch:
 * `uv lock --upgrade` to upgrade dependencies.
 * Change `__version__` in main `__init__.py`.
 * Change `version` in `pyproject.toml`.
+* Add CHANGELOG.md entry
 * Check that `classifiers` in `pyproject.toml` includes all Python versions.
 * Check that `run` script `test-py-versions` command includes all Python versions. 
 * Run all checks `./run check`.
-* Build via `rm -r dist && uv build`.
-* Publish via `uv publish` (Needs token from PyPI maintainer/owner account for the project which is used as password after entering username)
+* Check build runs via `rm -r dist && uv build`.
+
+#### Actual release
+Run from develop branch:
+
+```shell
+./release.sh 0.1.0      # replace with actual version
+```
+
+This will check some things, manage branch, tag, build and publish.
