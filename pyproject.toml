@@ -1,0 +1,80 @@
+[project]
+name = "dtexp"
+version = "0.1.0"
+description = "A datetime expression parser"
+readme = "README.md"
+authors = [
+    { name = "stewit", email = "" }
+]
+license = {file = "LICENSE"}
+
+requires-python = ">=3.11"
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+]
+
+dependencies = [
+    "pendulum",
+]
+
+[project.urls]
+homepage = "https://github.com/stewit/dtexp"
+documentation = "https://github.com/stewit/dtexp"
+repository = "https://github.com/stewit/dtexp"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "genbadge[coverage]>=1.1.2",
+    "mypy>=1.18.2",
+    "pytest>=8.4.0",
+    "pytest-cov>=6.1.1",
+    "ruff>=0.14.3",
+]
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 101
+
+[tool.ruff.lint]
+
+select = [ "ALL" ]
+
+ignore = [
+    "COM812",
+    "TRY003",
+    "EM101",
+    "PLR0913",
+    "D202",
+    "D203",
+    "D211",
+    "D212",
+    "D213",
+    "PLR2004",
+    "TD002",
+    "TD003"
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S101",   # Allow assert statements
+    "ANN",    # Allow missing type annotations
+    "D",      # Allow missing docstrings
+    "PLR2004", # Allow magic values
+    "S105",   # Allow hardcoded passwords (for test fixtures)
+    "S106",   # Allow hardcoded passwords in function arguments
+    "INP001"
+]

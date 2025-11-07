@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "$0 [COMMAND] [ARGS]"
+    echo ""
+    echo "Hint: Some commands may expect a Python dev virtual environment to be active"
+    echo ""
+    echo "  Commands:"
+    echo "  - test            :    run pytest on hetdesrun code"
+    echo "  - lint            :    call ruff"
+    echo "  - typecheck       :    run mypy static type check"
+    echo "  - format          :    run ruff format"
+    echo "  - check           :    run format check, tests, typechecking"
+}
+
+fn_exists() {
+    LC_ALL=C type "${1:-}" 2>/dev/null | grep -q 'function'
+}
+
+COMMAND="${1:-}"
+shift
+ARGUMENTS=("${@}")
+
+set -euo pipefail
+
+#----- subcommands -----#
+
+test() {
+    uv run --dev pytest --cov=dtexp --cov-report=xml:coverage.xml --cov-report=html:htmlcov --no-cov-on-fail --cov-report=term-missing tests "$@"
+}
+
+# shellcheck disable=SC2120
+test-py-versions() {
+    uv python upgrade &&
+    echo "Py 3.11" && uv run --python=3.11 --dev pytest --cov=dtexp --cov-report=xml:coverage.xml --cov-report=html:htmlcov --no-cov-on-fail --cov-report=term-missing tests "$@" &&
+    echo "Py 3.12" && uv run --python=3.12 --dev pytest --cov=dtexp --cov-report=xml:coverage.xml --cov-report=html:htmlcov --no-cov-on-fail --cov-report=term-missing tests "$@" &&
+    echo "Py 3.13" && uv run --python=3.13 --dev pytest --cov=dtexp --cov-report=xml:coverage.xml --cov-report=html:htmlcov --no-cov-on-fail --cov-report=term-missing tests "$@" &&
+    echo "Py 3.14" && uv run --python=3.14 --dev pytest --cov=dtexp --cov-report=xml:coverage.xml --cov-report=html:htmlcov --no-cov-on-fail --cov-report=term-missing tests "$@"         
+}
+
+lint() {
+    uv run --dev ruff check src/dtexp tests "${@}"
+}
+
+typecheck() {
+    uv run --dev mypy "${@}" src/dtexp
+}
+
+format() {
+    uv run --dev ruff check --select I src/dtexp tests --fix "${@}" && echo "--> Ruff import sorting run."
+    uv run --dev ruff format src/dtexp tests "${@}" && echo "--> ruff format run."
+}
+
+check() {
+    # Will fail with non-zero exit status if any tool has some complaint.
+    # If everything is okay this will have 0 exits status
+     
+     # shellcheck disable=SC2119
+    echo "--> Running ruff format in check mode" && uv run --dev ruff format src/dtexp tests --check &&
+        echo "--> Running tests" && uv run --dev pytest --cov=dtexp --cov-report=xml:coverage.xml --cov-report=html:htmlcov --no-cov-on-fail --cov-report=term-missing tests &&
+        echo "--> Running tests against py-versions" && test-py-versions &&
+        echo "--> Running mypy" && uv run --dev mypy src/dtexp &&
+        echo "--> Running ruff" && uv run --dev ruff check src/dtexp tests &&
+        echo "CHECKS EXECUTION RESULTS: All checks were successful!"
+}
+
+#----- Execution -----#
+
+if fn_exists "$COMMAND"; then
+    # cd into the script's current directory
+    cd "${0%/*}" || exit 1
+
+    # Execute
+    TIMEFORMAT=$'\nTask completed in %3lR'
+
+    time "$COMMAND" "${ARGUMENTS[@]}"
+else
+    usage
+fi

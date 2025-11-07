@@ -1,0 +1,46 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+# pull_request:
+#   branches: [ ]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v5
+    
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v7
+
+    - name: Run all checks
+      run: |
+        ./run check
+
+    
+    - name: Generate coverage badge
+      run: |
+        uv run --dev genbadge coverage -i coverage.xml -o coverage-badge.svg
+        mkdir ./badges
+        cp coverage-badge.svg ./badges/coverage-badge.svg
+    
+    - name: Deploy coverage badge to badges branch
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: badges
+        FOLDER: ./badges
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MESSAGE: "Update coverage badge"
+        TARGET_DIR: .
