@@ -122,7 +122,7 @@ s[start:end]
 # 2025-10-30 12:10:00+00:00    1.083654
 ```
 
-**Note**: Comparing to[Grafana relative time-range behaviour](https://grafana.com/docs/grafana/latest/visualizations/dashboards/use-dashboards/#time-units-and-relative-ranges): The `/` of `dtexp` always goes to the start of the interval corresponding to the behaviour in `from` timestamps of Grafana. In Grafana `/` behaves differently for `from` and `to`!
+**Note**: Comparing to [Grafana relative time-range behaviour](https://grafana.com/docs/grafana/latest/visualizations/dashboards/use-dashboards/#time-units-and-relative-ranges): The `/` of `dtexp` always goes to the start of the interval corresponding to the behaviour in `from` timestamps of Grafana. In Grafana `/` behaves differently for `from` and `to`!
 
 ### Conditions (experimental)
 
