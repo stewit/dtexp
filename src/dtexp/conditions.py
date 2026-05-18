@@ -102,7 +102,7 @@ def build_condition_dict(condition_elements: list[str]) -> dict[str, int]:
                 raise DtexpParsingError(msg)
 
             condition_type = remaining_condition_elements[2]
-            if condition_type not in {"is"}:
+            if condition_type not in {"is"}:  # noqa: FURB171
                 raise DtexpParsingError('Can only understand "is" conditions')
 
             condition_value = int(remaining_condition_elements[3])
